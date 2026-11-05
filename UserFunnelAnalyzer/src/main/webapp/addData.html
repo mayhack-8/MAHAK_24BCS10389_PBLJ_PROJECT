@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Funnel Data</title>
+    <style>
+
+        /* ── Reset & Base ──────────────────────────────────────────────────── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f1117;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        /* ── Card Container ────────────────────────────────────────────────── */
+        .card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 40px 48px;
+            width: 100%;
+            max-width: 520px;
+        }
+
+        /* ── Header ────────────────────────────────────────────────────────── */
+        .card-header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .card-header .icon {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+        }
+
+        .card-header h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .card-header p {
+            font-size: 0.88rem;
+            color: #6b7280;
+        }
+
+        /* ── Form Fields ───────────────────────────────────────────────────── */
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s ease, background 0.2s ease;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        select option {
+            background: #1f2937;
+            color: #e0e0e0;
+        }
+
+        /* ── Stage Selector Visual ─────────────────────────────────────────── */
+        .stage-selector {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .stage-btn {
+            padding: 10px 6px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            color: #9ca3af;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .stage-btn:hover         { background: rgba(255,255,255,0.08); }
+        .stage-btn.active-visit    { background: rgba(99,102,241,0.2);  border-color: #6366f1; color: #818cf8; }
+        .stage-btn.active-signup   { background: rgba(34,197,94,0.2);   border-color: #22c55e; color: #4ade80; }
+        .stage-btn.active-cart     { background: rgba(234,179,8,0.2);   border-color: #eab308; color: #facc15; }
+        .stage-btn.active-purchase { background: rgba(239,68,68,0.2);   border-color: #ef4444; color: #f87171; }
+
+        /* Hidden real select kept in sync with visual buttons */
+        #stage { display: none; }
+
+        /* ── Submit Button ─────────────────────────────────────────────────── */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 20px rgba(99,102,241,0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(99,102,241,0.5);
+        }
+
+        /* ── Status Banner ─────────────────────────────────────────────────── */
+        .status-banner {
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            display: none;
+            text-align: center;
+        }
+
+        .status-success {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.35);
+            color: #4ade80;
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #f87171;
+        }
+
+        /* ── Back Link ─────────────────────────────────────────────────────── */
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 24px;
+            color: #6b7280;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #818cf8; }
+
+    </style>
+</head>
+<body>
+
+    <div class="card">
+
+        <!-- Header -->
+        <div class="card-header">
+            <div class="icon">➕</div>
+            <h2>Add Funnel Record</h2>
+            <p>Manually insert a user interaction into the funnel</p>
+        </div>
+
+        <!-- Status Banner (shown by JS after redirect) -->
+        <div class="status-banner" id="statusBanner"></div>
+
+        <!-- Form -->
+        <form action="insert" method="post">
+
+            <!-- User ID -->
+            <div class="form-group">
+                <label for="user_id">User ID</label>
+                <input
+                    type="number"
+                    id="user_id"
+                    name="user_id"
+                    placeholder="e.g. 1001"
+                    min="1"
+                    required
+                />
+            </div>
+
+            <!-- Stage (visual buttons + hidden select) -->
+            <div class="form-group">
+                <label>Funnel Stage</label>
+                <div class="stage-selector">
+                    <div class="stage-btn" data-value="visit"    onclick="selectStage(this)">🔵 Visit</div>
+                    <div class="stage-btn" data-value="signup"   onclick="selectStage(this)">🟢 Signup</div>
+                    <div class="stage-btn" data-value="cart"     onclick="selectStage(this)">🟡 Cart</div>
+                    <div class="stage-btn" data-value="purchase" onclick="selectStage(this)">🔴 Purchase</div>
+                </div>
+                <select id="stage" name="stage" required>
+                    <option value="">-- select --</option>
+                    <option value="visit">visit</option>
+                    <option value="signup">signup</option>
+                    <option value="cart">cart</option>
+                    <option value="purchase">purchase</option>
+                </select>
+            </div>
+
+            <!-- Device -->
+            <div class="form-group">
+                <label for="device">Device</label>
+                <select id="device" name="device" required>
+                    <option value="">-- select device --</option>
+                    <option value="mobile">📱 Mobile</option>
+                    <option value="desktop">🖥️ Desktop</option>
+                    <option value="tablet">📟 Tablet</option>
+                </select>
+            </div>
+
+            <!-- Source -->
+            <div class="form-group">
+                <label for="source">Traffic Source</label>
+                <select id="source" name="source" required>
+                    <option value="">-- select source --</option>
+                    <option value="google">🔍 Google</option>
+                    <option value="facebook">📘 Facebook</option>
+                    <option value="instagram">📸 Instagram</option>
+                    <option value="email">📧 Email</option>
+                    <option value="direct">🔗 Direct</option>
+                </select>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn-submit">
+                Insert Record →
+            </button>
+
+        </form>
+
+        <a href="index.html" class="back-link">← Back to Home</a>
+
+    </div>
+
+    <!-- ── JavaScript: stage selector + status banner ──────────────────────── -->
+    <script>
+
+        // ── Visual stage button selection ─────────────────────────────────────
+        function selectStage(btn) {
+            // Clear all active classes
+            document.querySelectorAll('.stage-btn').forEach(b => {
+                b.className = 'stage-btn';
+            });
+
+            // Apply active class for selected stage
+            const val = btn.getAttribute('data-value');
+            btn.classList.add('active-' + val);
+
+            // Keep hidden select in sync for form submission
+            document.getElementById('stage').value = val;
+        }
+
+        // ── Read URL params and show status banner after redirect ─────────────
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const status = params.get('status');
+            const reason = params.get('reason');
+            const banner = document.getElementById('statusBanner');
+
+            if (status === 'success') {
+                banner.textContent = '✅ Record inserted successfully!';
+                banner.classList.add('status-success');
+                banner.style.display = 'block';
+            } else if (status === 'error') {
+                const messages = {
+                    'empty_fields' : '⚠️ Please fill in all fields before submitting.',
+                    'invalid_id'   : '⚠️ User ID must be a valid number.',
+                    'db_failure'   : '❌ Database error. Please try again.'
+                };
+                banner.textContent = messages[reason] || '❌ An unexpected error occurred.';
+                banner.classList.add('status-error');
+                banner.style.display = 'block';
+            }
+
+            // Clean URL after reading params
+            if (status) {
+                window.history.replaceState({}, '', 'addData.html');
+            }
+        });
+
+    </script>
+
+</body>
+</html>

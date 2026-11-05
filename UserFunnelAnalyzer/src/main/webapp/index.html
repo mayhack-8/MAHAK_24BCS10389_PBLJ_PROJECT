@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Funnel Drop-Off Analyzer</title>
+    <style>
+
+        /* ── Reset & Base ──────────────────────────────────────────────────── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f1117;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ── Hero Section ──────────────────────────────────────────────────── */
+        .hero {
+            text-align: center;
+            padding: 60px 40px;
+            max-width: 800px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: #818cf8;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 28px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #9ca3af;
+            line-height: 1.7;
+            margin-bottom: 48px;
+            max-width: 560px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ── Funnel Visual ─────────────────────────────────────────────────── */
+        .funnel-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 52px;
+            flex-wrap: wrap;
+        }
+
+        .funnel-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stage-box {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .stage-visit    { background: rgba(99,  102, 241, 0.2); border: 1px solid #6366f1; color: #818cf8; }
+        .stage-signup   { background: rgba(34,  197, 94,  0.2); border: 1px solid #22c55e; color: #4ade80; }
+        .stage-cart     { background: rgba(234, 179, 8,   0.2); border: 1px solid #eab308; color: #facc15; }
+        .stage-purchase { background: rgba(239, 68,  68,  0.2); border: 1px solid #ef4444; color: #f87171; }
+
+        .stage-arrow {
+            font-size: 1.2rem;
+            color: #4b5563;
+            margin-top: -6px;
+        }
+
+        /* ── Button Group ──────────────────────────────────────────────────── */
+        .btn-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 48px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: #ffffff;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #d1d5db;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-simulate {
+            background: rgba(234, 179, 8, 0.15);
+            color: #facc15;
+            border: 1px solid rgba(234, 179, 8, 0.35);
+        }
+
+        .btn-simulate:hover {
+            background: rgba(234, 179, 8, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* ── Info Cards ────────────────────────────────────────────────────── */
+        .info-cards {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px 28px;
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .info-card .icon {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+        }
+
+        .info-card .label {
+            font-size: 0.78rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .info-card .value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+
+        /* ── Footer ────────────────────────────────────────────────────────── */
+        footer {
+            margin-top: 60px;
+            font-size: 0.78rem;
+            color: #374151;
+            letter-spacing: 0.5px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+
+        <!-- Badge -->
+        <div class="badge">📊 Analytics Project</div>
+
+        <!-- Title -->
+        <h1>User Funnel<br>Drop-Off Analyzer</h1>
+
+        <!-- Subtitle -->
+        <p class="subtitle">
+            A Java Web Application that tracks user behavior across
+            the conversion funnel, computes drop-off rates, and
+            generates actionable insights in real time.
+        </p>
+
+        <!-- Funnel Visual -->
+        <div class="funnel-visual">
+            <div class="funnel-stage">
+                <div class="stage-box stage-visit">Visit</div>
+            </div>
+            <div class="stage-arrow">→</div>
+            <div class="funnel-stage">
+                <div class="stage-box stage-signup">Signup</div>
+            </div>
+            <div class="stage-arrow">→</div>
+            <div class="funnel-stage">
+                <div class="stage-box stage-cart">Cart</div>
+            </div>
+            <div class="stage-arrow">→</div>
+            <div class="funnel-stage">
+                <div class="stage-box stage-purchase">Purchase</div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="btn-group">
+            <a href="dashboard" class="btn btn-primary">
+                📈 View Dashboard
+            </a>
+            <a href="addData.html" class="btn btn-secondary">
+                ➕ Add Data
+            </a>
+            <a href="simulate" class="btn btn-simulate">
+                ⚡ Simulate Data
+            </a>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="info-cards">
+            <div class="info-card">
+                <div class="icon">🗄️</div>
+                <div class="label">Database</div>
+                <div class="value">MySQL + JDBC</div>
+            </div>
+            <div class="info-card">
+                <div class="icon">☕</div>
+                <div class="label">Backend</div>
+                <div class="value">Java Servlets</div>
+            </div>
+            <div class="info-card">
+                <div class="icon">🖥️</div>
+                <div class="label">Server</div>
+                <div class="value">Tomcat 10.1</div>
+            </div>
+            <div class="info-card">
+                <div class="icon">📐</div>
+                <div class="label">Architecture</div>
+                <div class="value">MVC Layered</div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>Built with Java · Servlets · JDBC · MySQL · JSP</footer>
+
+</body>
+</html>
